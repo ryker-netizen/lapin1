@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram // vzaidkost</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=JetBrains+Mono&display=swap">
+    <style>
+        :root {
+            --tg-bg: #0e1621;
+            --tg-sidebar: #17212b;
+            --tg-active: #2b5278;
+            --tg-text: #f5f5f5;
+            --tg-hint: #708499;
+            --tg-bubble: #182533;
+        }
+
+        body {
+            background-color: var(--tg-bg);
+            color: var(--tg-text);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Загрузочный экран */
+        #boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ff00;
+            padding: 20px;
+        }
+
+        /* Тот самый фон с глазами */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'); /* Замени на свой файл eyes.jpg */
+            background-blend-mode: overlay;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .telegram-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: var(--tg-sidebar);
+            border-right: 1px solid rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(14, 22, 33, 0.95);
+        }
+
+        .chat-header {
+            height: 56px;
+            background: var(--tg-sidebar);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .message-bubble {
+            background: var(--tg-bubble);
+            max-width: 450px;
+            padding: 12px;
+            border-radius: 12px;
+            position: relative;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sidebar-item:hover { background: #232e3c; }
+        .sidebar-item.active { background: var(--tg-active); }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2b5278;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .glitch-text {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+
+        .btn-tg {
+            background: #2b5278;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 500;
+            transition: brightness 0.2s;
+        }
+
+        .btn-tg:hover { filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <div id="boot-log" class="text-xs md:text-sm"></div>
+    </div>
+
+    <div class="bg-overlay"></div>
+
+    <div class="telegram-container">
+        <aside class="sidebar">
+            <div class="p-4 border-b border-black/20 flex items-center gap-4">
+                <div class="w-8 h-1 bg-white/20 rounded"></div>
+                <div class="text-sm font-medium opacity-70">Telegram</div>
+            </div>
+            
+            <div id="chat-list" class="overflow-y-auto flex-1">
+                </div>
+        </aside>
+
+        <main class="chat-area">
+            <header class="chat-header">
+                <div id="active-chat-info" class="flex flex-col">
+                    <span id="header-name" class="font-medium text-sm">lapin</span>
+                    <span id="header-status" class="text-[11px] text-blue-400">1 подписчик</span>
+                </div>
+            </header>
+
+            <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-10 flex flex-col items-center">
+                </div>
+
+            <div class="p-4 bg-var(--tg-sidebar) flex justify-center">
+                <div class="max-w-2xl w-full bg-[#17212b] rounded-lg p-3 text-sm text-[#708499] border border-white/5">
+                    Публикация...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const CHATS = {
+            'vzaidkost': {
+                name: 'lapin',
+                id: '@vzaidkost',
+                avatar: 'L',
+                status: '1 подписчик',
+                messages: [
+                    { type: 'info', text: '13 февраля. Канал создан' },
+                    { type: 'bubble', time: '07:26', text: 'You say I took everything? I only took your mask. Beneath it, there was nothing but a broken doll.' },
+                    { type: 'bubble', time: '08:00', text: 'Welcome home, @vzaidkost. The cage is still open.\n\n[TRY GOING TO THE OLD CHANNEL @vzaidkost]' },
+                    { type: 'bubble', time: '09:48', text: 'You like games, don\'t you? Let\'s see if your intellect matches your ambition. Here is your mirror, broken down into signals.\n\nMIRROR #1788\n\nTranslate it. Realize it. Admit it.' }
+                ]
+            },
+            'murmure-de-vide': {
+                name: 'murmure de vide',
+                id: '@Auuddvordu',
+                avatar: 'M',
+                status: '1 подписчик',
+                messages: [
+                    { type: 'info', text: '9 февраля. Канал создан' },
+                    { type: 'bubble', time: '04:31', text: 'архив неслучившегося\n\nздесь правда — не в строчках, а в паузе меж них, где эхо без голоса стелется в тишь. не место, а след от несказанных слов, что таял во мгле, не дойдя до основ.' },
+                    { type: 'link', url: 'https://t.me/Auuddvordu', label: 'Перейти в канал' }
+                ]
+            },
+            'ili': {
+                name: 'или',
+                id: '@Vozzmezdrr',
+                avatar: 'И',
+                status: '1 подписчик',
+                messages: [
+                    { type: 'bubble', time: '05:08', text: 'здесь числа не знают порядка, а звук - чистоты. здесь падают маски, касаясь немой черты. не ищи отражений - зеркало выпило взгляд.' }
+                ]
+            },
+            'foryouhaaa': {
+                name: 'si vous êtes arrivé...',
+                id: '@foryouhaaa',
+                avatar: 'S',
+                status: '1 подписчик',
+                messages: [
+                    { type: 'bubble', time: '05:49', text: 'Identification par le rythme. je ressens la même chose que cette mélodie.\n\nэто единственный способ сказать правду.' },
+                    { type: 'choice', text: 'choisis. je vais t\'aider. allons discuter.', options: [
+                        { label: 'A', link: '#dialog-a' },
+                        { label: 'B', link: '#dialog-b' },
+                        { label: 'C', link: '#dialog-c' }
+                    ]}
+                ]
+            },
+            'mirror': {
+                name: 'Mirror #1788',
+                id: 'System',
+                avatar: '!',
+                status: 'Decrypting...',
+                messages: [
+                    { type: 'bubble', time: 'now', text: 'DECODING MODULE INITIALIZED.' },
+                    { type: 'morse', text: '- .... .. ... / .. ... / -. --- - / .- / -.. .-. . .- -- / ... --- -- . / --- -. . / .. ... / .-- .- - -.-. .... .. -. --. / -.-- --- ..- / .-.. .- .--. .. -.', decoded: 'THIS IS NOT A DREAM. SOMEONE IS WATCHING YOU, LAPIN.' }
+                ]
+            },
+            'dialog-a': { name: 'A', id: 'Private', avatar: 'A', status: 'final path', messages: [{ type: 'bubble', text: 'Path A: The truth you hide.' }] },
+            'dialog-b': { name: 'B', id: 'Private', avatar: 'B', status: 'final path', messages: [{ type: 'bubble', text: 'Path B: The truth you fear.' }] },
+            'dialog-c': { name: 'C', id: 'Private', avatar: 'C', status: 'final path', messages: [{ type: 'bubble', text: 'Path C: The experiment continues.' }] }
+        };
+
+        let currentChat = 'vzaidkost';
+
+        function initBoot() {
+            const log = document.getElementById('boot-log');
+            const lines = [
+                "> INITIALIZING LAPIN_OS v.1.0...",
+                "> LOADING CORE MODULES...",
+                "> ACCESSING ENCRYPTED_FILES/VZAIDKOST...",
+                "> CONNECTION ESTABLISHED: 127.0.0.1",
+                "> WARNING: MIRROR_LEAK DETECTED",
+                "> DECODING ARCHIVE..."
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if(i < lines.length) {
+                    log.innerHTML += `<div>${lines[i]}</div>`;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
+                }
+            }, 400);
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('chat-list');
+            list.innerHTML = '';
+            Object.keys(CHATS).forEach(key => {
+                if (['dialog-a', 'dialog-b', 'dialog-c'].includes(key)) return;
+                const chat = CHATS[key];
+                const item = document.createElement('div');
+                item.className = `sidebar-item ${currentChat === key ? 'active' : ''}`;
+                item.onclick = () => switchChat(key);
+                item.innerHTML = `
+                    <div class="avatar">${chat.avatar}</div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium">${chat.name}</span>
+                        <span class="text-[11px] opacity-50">${chat.id}</span>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function switchChat(key) {
+            currentChat = key;
+            const chat = CHATS[key];
+            document.getElementById('header-name').innerText = chat.name;
+            document.getElementById('header-status').innerText = chat.status;
+            
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '';
+            
+            chat.messages.forEach(msg => {
+                if(msg.type === 'info') {
+                    container.innerHTML += `<div class="text-[11px] bg-black/30 px-3 py-1 rounded-full mb-4 opacity-60">${msg.text}</div>`;
+                } else if(msg.type === 'bubble') {
+                    container.innerHTML += `
+                        <div class="w-full flex justify-start mb-2">
+                            <div class="message-bubble">
+                                <div class="text-[13px] whitespace-pre-wrap">${msg.text}</div>
+                                <div class="text-[9px] text-right opacity-40 mt-1">${msg.time || ''}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if(msg.type === 'choice') {
+                    let btns = msg.options.map(o => `<button onclick="switchChat('${o.link.replace('#','')}')" class="bg-blue-900/40 border border-white/10 p-2 hover:bg-blue-800 transition">${o.label}</button>`).join('');
+                    container.innerHTML += `<div class="message-bubble w-full max-w-sm"><div class="text-sm mb-4">${msg.text}</div><div class="grid grid-cols-3 gap-2">${btns}</div></div>`;
+                } else if(msg.type === 'morse') {
+                    container.innerHTML += `
+                        <div class="message-bubble w-full max-w-md text-center">
+                            <div id="morse-text" class="font-mono text-xs mb-4 tracking-widest">${msg.text}</div>
+                            <button id="dec-btn" onclick="decodeMorse('${msg.decoded}')" class="btn-tg">Расшифровать</button>
+                            <div id="dec-output" class="mt-4 text-sm font-bold text-blue-400 hidden"></div>
+                        </div>
+                    `;
+                }
+            });
+            renderSidebar();
+        }
+
+        function decodeMorse(result) {
+            const out = document.getElementById('dec-output');
+            const btn = document.getElementById('dec-btn');
+            btn.innerText = "Processing...";
+            setTimeout(() => {
+                out.innerText = result;
+                out.classList.remove('hidden');
+                btn.innerText = "Experiment Complete";
+            }, 1500);
+        }
+
+        window.onload = () => {
+            initBoot();
+            switchChat('vzaidkost');
+        };
+    </script>
+</body>
+</html>
