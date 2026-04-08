@@ -16,13 +16,12 @@
         body {
             background-color: var(--bg);
             color: var(--primary);
-            font-family: 'JetBrains+Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             overflow: hidden;
             height: 100vh;
             margin: 0;
         }
 
-        /* Загрузочный экран */
         #boot-screen {
             position: fixed;
             inset: 0;
@@ -36,7 +35,6 @@
             padding: 20px;
         }
 
-        /* Иммерсивный фон */
         .viewport-background {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -46,7 +44,6 @@
             z-index: -1;
         }
 
-        /* CRT Scanline Effect */
         body::before {
             content: " ";
             display: block;
@@ -59,7 +56,6 @@
             pointer-events: none;
         }
 
-        /* Glitch Animation */
         .glitch { position: relative; display: inline-block; }
         .glitch::after {
             content: attr(data-text);
@@ -97,15 +93,17 @@
 
         .btn-branch {
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             transition: all 0.3s;
-            cursor: pointer;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            font-size: 0.75rem;
         }
         .btn-branch:hover {
             background: #fff;
             color: #000;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -131,29 +129,19 @@
 
         <div class="flex flex-1 overflow-hidden">
             <nav class="w-72 border-r border-white/10 p-6 flex flex-col gap-2 bg-black/40 overflow-y-auto">
-                <div class="text-[9px] uppercase tracking-widest opacity-30 mb-4 font-bold border-b border-white/10 pb-2">Main_Directories</div>
+                <div class="text-[9px] uppercase tracking-widest opacity-30 mb-4 font-bold border-b border-white/10 pb-2">Directories</div>
                 <a href="#vzaidkost" class="sidebar-link p-2 text-xs opacity-60">/root/vzaidkost</a>
                 <a href="#murmure-de-vide" class="sidebar-link p-2 text-xs opacity-60">/root/murmure-de-vide</a>
                 <a href="#ili" class="sidebar-link p-2 text-xs opacity-60">/root/ili</a>
                 <a href="#foryouhaaa" class="sidebar-link p-2 text-xs opacity-60">/root/foryouhaaa</a>
                 <a href="#limite" class="sidebar-link p-2 text-xs opacity-60">/root/limite</a>
                 
-                <div class="text-[9px] uppercase tracking-widest opacity-30 mt-6 mb-4 font-bold border-b border-white/10 pb-2">Sub_Layers</div>
+                <div class="mt-6 text-[9px] uppercase tracking-widest opacity-30 font-bold border-b border-white/10 pb-2">Security</div>
                 <a href="#mirror" class="sidebar-link p-2 text-xs text-red-400 opacity-80">/root/mirror_1788</a>
-                
-                <div class="mt-auto space-y-2">
-                    <div class="text-[8px] opacity-20 uppercase">Experimental_Paths</div>
-                    <div class="flex gap-2">
-                        <a href="#dialog-a" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">A</a>
-                        <a href="#dialog-b" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">B</a>
-                        <a href="#dialog-c" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">C</a>
-                    </div>
-                </div>
             </nav>
 
             <main class="flex-1 overflow-y-auto p-12 relative">
-                <div id="view-container" class="max-w-3xl mx-auto opacity-0 transition-all duration-700 transform translate-y-4">
-                    </div>
+                <div id="view-container" class="max-w-3xl mx-auto opacity-0 transition-all duration-700 transform translate-y-4"></div>
             </main>
         </div>
 
@@ -165,87 +153,73 @@
 
     <script>
         const DATA = {
-            '𝗺𝘂𝗿𝗺𝘂𝗿𝗲 𝗱𝗲 𝘃𝗶𝗱𝗲': {
+            'vzaidkost': {
                 title: 'LAPIN // VZAIDKOST',
                 content: `
                     <div class="space-y-8">
-                        <div class="border-l-2 border-white/20 pl-6 py-4 italic text-lg opacity-90 leading-relaxed">
-                            архив неслучившегося
-                        </div>
+                        <div class="border-l-2 border-white/20 pl-6 py-4 italic text-lg opacity-90 leading-relaxed">архив неслучившегося</div>
                         <div class="space-y-6 text-sm opacity-70 leading-relaxed">
                             <p>здесь правда — не в строчках, а в паузе меж них,<br>где эхо без голоса стелется в тишь.<br>не место, а след от несказанных слов,<br>что таял во мгле, не дойдя до основ.</p>
                             <p class="text-white font-bold py-4 border-y border-white/5">ты ищешь названья? его тут не жди,<br>оно растворилось в безликой груди.<br>ты видишь не буквы — лишь призрак чернил,<br>что ветер циферблатов давно уносил.</p>
                             <p>здесь нету дверей, есть лишь тонкая грань,<br>где мысль, не рождённая, прячется в гарь.<br>ты входишь с вопросом, но вскоре поймёшь:<br>ответ — это то, что ты сам унесёшь.</p>
                         </div>
-                    </div>
-                `
+                    </div>`
             },
-            'или': {
+            'murmure-de-vide': {
                 title: 'DIRECTORY // AUUDDVORDU',
-                content: `<div class="whitespace-pre-line text-sm opacity-80 leading-loose">
-                </div>
-                        <div class="space-y-6 text-sm opacity-70 leading-relaxed">
-                <p>здесь числа не знают порядка, а звук - чистоты.<br>здесь падают маски, касаясь немой черты.<br>не ищи отражений - зеркало выпило взгляд,<br>в архиве, где стрелки часов не вернутся назад.<p>
-                <p>это поле - ничьё. это сгусток изъятых времён,<br>где каждый, кто вошёл, был в чужое лицо влюблён.<br>но призрак чернил не накормит бумажный костёр,<br>и выход исчез там, где память ластик стёр.<p>
-                <p>ты - сумма проекций. ты - отсвет в разбитом окне.<br>ответ разлагается в мёртвой, густой тишине.<br>здесь "или" не выбор, а фатум, застывший в петле,<br>где истина спит, как монета в остывшей золе.<p>
-                <p>портал не прощает. он видит, что ты - это дым.<br>останься собой. или стань кем-то вечно чужим.<p>
-                 </div>
-                    </div>
-                `
-            },
-            'l𝗶𝗺𝗶𝘁𝗲': {
-                title: 'DIRECTORY // VOZZMEZDRR',
-                content: `<div class="whitespace-pre-line text-sm opacity-80 leading-loose">
-                </div>
-                        <div class="space-y-6 text-sm opacity-70 leading-relaxed">
-                <p>здесь стерты границы — остался лишь голый каркас.<br>то, что должно случиться, случается прямо сейчас.<br>не ищи здесь спасенья, не жди теплоты от огня,<br>в архиве чертеж подменил и тебя, и меня.<p>
-                <p>ты больше не ищешь? теперь ты — деталь в пустоте,<br>вписав свою тень в геометрию на холсте.<br>где раньше был голос — теперь лишь ритмичный сбой,<br>ты стал не чужим, ты просто перестал быть собой.<p>
-                <p>здесь «или» — свершилось. петля затянулась в черте,<br>и цифры застыли на самой последней черте.<br>твой образ — не дым, а вектор в холодном ряду,<br>где время сжигает надежду, как лёд на ходу.<p>
-                <p>теперь ты — портал. ты смотришь в него изнутри,<br>где свет превращается в код. не моргай, а смотри.<br>здесь нет окончанья. лишь пульс затаился в узлах.<br>и тысячи «кто ты?» застыли в стальных глазах.<p>
-                
-            },
-            '𝘀𝗶 𝘃𝗼𝘂𝘀 ê𝘁𝗲𝘀 𝗮𝗿𝗿𝗶𝘃é 𝗷𝘂𝘀𝗾𝘂'𝗶𝗰𝗶...': {
-                title: 'vous êtes français.\'communiquons dans votre langue.',
                 content: `
-                    <p class="mb-8 text-sm opacity-70">Data analysis complete... Select your synchronization path:</p>
+                    <div class="space-y-6 text-sm opacity-70 leading-relaxed">
+                        <p>здесь числа не знают порядка, а звук - чистоты.<br>здесь падают маски, касаясь немой черты.<br>не ищи отражений - зеркало выпило взгляд,<br>в архиве, где стрелки часов не вернутся назад.</p>
+                        <p>это поле - ничьё. это сгусток изъятых времён,<br>где каждый, кто вошёл, был в чужое лицо влюблён.<br>но призрак чернил не накормит бумажный костёр,<br>и выход исчез там, где память ластик стёр.</p>
+                        <p>ты - сумма проекций. ты - отсвет в разбитом окне.<br>ответ разлагается в мёртвой, густой тишине.<br>здесь "или" не выбор, а фатум, застывший в петле,<br>где истина спит, как монета в остывшей золе.</p>
+                        <p>портал не прощает. он видит, что ты - это дым.<br>останься собой. или стань кем-то вечно чужим.</p>
+                    </div>`
+            },
+            'ili': {
+                title: 'DIRECTORY // VOZZMEZDRR',
+                content: `
+                    <div class="space-y-6 text-sm opacity-70 leading-relaxed">
+                        <p>здесь стерты границы — остался лишь голый каркас.<br>то, что должно случиться, случается прямо сейчас.<br>не ищи здесь спасенья, не жди теплоты от огня,<br>в архиве чертеж подменил и тебя, и меня.</p>
+                        <p>ты больше не ищешь? теперь ты — деталь в пустоте,<br>вписав свою тень в геометрию на холсте.<br>где раньше был голос — теперь лишь ритмичный сбой,<br>ты стал не чужим, ты просто перестал быть собой.</p>
+                        <p>здесь «или» — свершилось. петля затянулась в черте,<br>и цифры застыли на самой последней черте.<br>твой образ — не дым, а вектор в холодном ряду,<br>где время сжигает надежду, как лёд на ходу.</p>
+                        <p>теперь ты — портал. ты смотришь в него изнутри,<br>где свет превращается в код. не моргай, а смотри.<br>здесь нет окончанья. лишь пульс затаился в узлах.<br>и тысячи «кто ты?» застыли в стальных глазах.</p>
+                    </div>`
+            },
+            'foryouhaaa': {
+                title: "Si vous êtes arrivé jusqu'ici...",
+                content: `
+                    <p class="mb-8 text-sm opacity-70">Commencer par le début ou choisir sa propre fin?</p>
+                    <div class="grid grid-cols-1 gap-4">
+                        <a href="https://t.me/+EMdcGprRgmUzMDg6" target="_blank" class="btn-branch text-left">PATH_A: commençons par le début?</a>
+                        <a href="https://t.me/reflexxxvm" target="_blank" class="btn-branch text-left">PATH_B: ou..par ici?</a>
+                        <a href="https://t.me/+ek3lS2uIxHw4MjUy" target="_blank" class="btn-branch text-left text-xs">PATH_C: choisis. je vais t'aider. allons discuter. tu aimes parler à moi par allusions.</a>
+                    </div>`
+            },
+            'limite': {
+                title: 'EXPERIMENT // THE_VARIABLE',
+                content: `
+                    <p class="mb-8 text-sm italic opacity-60">Data analysis complete. The probability of an honest answer remains low, but the experiment requires a variable. Choose your path, Lapin. One link is for the truth you hide, the other is for the truth you fear.</p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div onclick="location.hash='dialog-a'" class="btn-branch">PATH_A</div>
-                        <div onclick="location.hash='dialog-b'" class="btn-branch">PATH_B</div>
-                        <div onclick="location.hash='dialog-c'" class="btn-branch">PATH_C</div>
-                    </div>
-                `
+                        <a href="https://t.me/m/2Z5pdpC0NmJi" target="_blank" class="btn-branch">A. TRUTH_HIDE</a>
+                        <a href="https://t.me/m/wtqtwY0LNmEy" target="_blank" class="btn-branch">B. TRUTH_FEAR</a>
+                        <a href="https://t.me/m/nif1_K6IZTli" target="_blank" class="btn-branch">C. VARIABLE</a>
+                    </div>`
             },
             'mirror': {
                 title: 'MIRROR_DECRYPTOR_#1788',
                 content: `
-                    <div class="bg-red-900/10 border border-red-900/30 p-4 mb-6 text-[10px] uppercase text-red-500">
-                        Warning: Memory fragmentation detected. Decoding required.
-                    </div>
+                    <div class="bg-red-900/10 border border-red-900/30 p-4 mb-6 text-[10px] uppercase text-red-500">Warning: Memory fragmentation detected.</div>
                     <div class="bg-black/40 border border-white/5 p-6 font-mono text-xs tracking-[0.3em] mb-8 leading-loose" id="morse-box">
                         - .... .. ... / .. ... / -. --- - / .- / -.. .-. . .- -- / ... --- -- . / --- -. . / .. ... / .-- .- - -.-. .... .. -. --. / -.-- --- ..- / .-.. .- .--. .. -.
                     </div>
-                    <button onclick="runDecrypt()" id="dec-btn" class="border border-white/30 px-8 py-3 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
-                        Execute Decryption Protocol
-                    </button>
-                    <div id="dec-res" class="mt-10 text-xl font-bold tracking-[0.2em] text-white hidden glitch" data-text=""></div>
-                `
-            },
-            'dialog-a': { title: 'PATH // A', content: '<div class="text-sm opacity-50">Connecting to terminal 2Z5pdpC... [ACCESS DENIED]</div>' },
-            'dialog-b': { title: 'PATH // B', content: '<div class="text-sm opacity-50">Connecting to terminal wtqtwY0... [CONNECTION LOST]</div>' },
-            'dialog-c': { title: 'PATH // C', content: '<div class="text-sm opacity-50">Connecting to terminal nif1_K6... [ENCRYPTED]</div>' }
+                    <button onclick="runDecrypt()" id="dec-btn" class="border border-white/30 px-8 py-3 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">Decode</button>
+                    <div id="dec-res" class="mt-10 text-xl font-bold tracking-[0.2em] text-white hidden glitch" data-text=""></div>`
+            }
         };
 
         function initBoot() {
             const log = document.getElementById('boot-log');
-            const lines = [
-                "> INITIALIZING SYNDICATE_CORE...",
-                "> MOUNTING /ROOT/LAPIN...",
-                "> LOADING NEURAL_INTERFACE...",
-                "> ACCESSING VZAIDKOST_ARCHIVE...",
-                "> DECRYPTING VISUAL_LAYER...",
-                "> SYSTEM_READY."
-            ];
-            
+            const lines = ["> INITIALIZING...", "> MOUNTING /ROOT/LAPIN...", "> ACCESSING ARCHIVES...", "> SYSTEM_READY."];
             let i = 0;
             const interval = setInterval(() => {
                 if (i < lines.length) {
@@ -255,8 +229,10 @@
                     clearInterval(interval);
                     setTimeout(() => {
                         document.getElementById('boot-screen').style.opacity = '0';
-                        setTimeout(() => document.getElementById('boot-screen').remove(), 1000);
-                        renderView();
+                        setTimeout(() => {
+                            document.getElementById('boot-screen').remove();
+                            renderView();
+                        }, 1000);
                     }, 800);
                 }
             }, 300);
@@ -267,7 +243,6 @@
             const container = document.getElementById('view-container');
             const data = DATA[hash] || DATA['vzaidkost'];
 
-            // Update active state in sidebar
             document.querySelectorAll('.sidebar-link').forEach(l => {
                 l.classList.toggle('active', l.getAttribute('href') === `#${hash}`);
             });
@@ -276,10 +251,7 @@
             container.classList.add('opacity-0', 'translate-y-4');
 
             setTimeout(() => {
-                container.innerHTML = `
-                    <h2 class="text-3xl font-bold mb-12 tracking-tighter uppercase glitch" data-text="${data.title}">${data.title}</h2>
-                    ${data.content}
-                `;
+                container.innerHTML = `<h2 class="text-3xl font-bold mb-12 tracking-tighter uppercase glitch" data-text="${data.title}">${data.title}</h2>${data.content}`;
                 container.classList.remove('opacity-0', 'translate-y-4');
                 container.classList.add('opacity-100', 'translate-y-0');
             }, 300);
@@ -289,8 +261,6 @@
             const res = document.getElementById('dec-res');
             const btn = document.getElementById('dec-btn');
             btn.innerHTML = "DECODING...";
-            btn.disabled = true;
-            
             setTimeout(() => {
                 const text = "THIS IS NOT A DREAM. SOMEONE IS WATCHING YOU, LAPIN.";
                 res.innerHTML = text;
