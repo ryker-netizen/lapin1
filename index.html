@@ -2,27 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram // vzaidkost</title>
+    <title>VOID_ARCHIVE // LAPIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=JetBrains+Mono&display=swap">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700&display=swap');
+
         :root {
-            --tg-bg: #0e1621;
-            --tg-sidebar: #17212b;
-            --tg-active: #2b5278;
-            --tg-text: #f5f5f5;
-            --tg-hint: #708499;
-            --tg-bubble: #182533;
+            --glitch-color: #ff0000;
+            --primary: #d1d1d1;
+            --bg: #050505;
         }
 
         body {
-            background-color: var(--tg-bg);
-            color: var(--tg-text);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'JetBrains+Mono', monospace;
             overflow: hidden;
             height: 100vh;
+            margin: 0;
         }
 
         /* Загрузочный экран */
@@ -35,307 +32,266 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'JetBrains Mono', monospace;
             color: #00ff00;
             padding: 20px;
         }
 
-        /* Тот самый фон с глазами */
-        .bg-overlay {
+        /* Иммерсивный фон */
+        .viewport-background {
             position: fixed;
-            inset: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'); /* Замени на свой файл eyes.jpg */
-            background-blend-mode: overlay;
-            opacity: 0.15;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'), 
+                        radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        /* CRT Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 4px, 3px 100%;
             pointer-events: none;
-            z-index: 1;
         }
 
-        .telegram-container {
-            display: flex;
-            height: 100vh;
-            position: relative;
-            z-index: 2;
+        /* Glitch Animation */
+        .glitch { position: relative; display: inline-block; }
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px; text-shadow: -1px 0 red; top: 0;
+            background: var(--bg); overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: noise-anim 2s infinite linear alternate-reverse;
         }
 
-        .sidebar {
-            width: 300px;
-            background: var(--tg-sidebar);
-            border-right: 1px solid rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
+        @keyframes noise-anim {
+            0% { clip: rect(10px, 9999px, 20px, 0); }
+            100% { clip: rect(80px, 9999px, 90px, 0); }
         }
 
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: rgba(14, 22, 33, 0.95);
+        .scan-line {
+            width: 100%; height: 100px; z-index: 99;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1; position: absolute; bottom: 100%;
+            animation: scan 8s linear infinite;
         }
 
-        .chat-header {
-            height: 56px;
-            background: var(--tg-sidebar);
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.2);
+        @keyframes scan { 0% { bottom: 100%; } 100% { bottom: -100%; } }
+
+        .sidebar-link {
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            padding-left: 1rem;
+            border-left: 2px solid #fff;
         }
 
-        .message-bubble {
-            background: var(--tg-bubble);
-            max-width: 450px;
-            padding: 12px;
-            border-radius: 12px;
-            position: relative;
-            margin-bottom: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .sidebar-item {
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .btn-branch {
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s;
             cursor: pointer;
-            transition: background 0.2s;
         }
-
-        .sidebar-item:hover { background: #232e3c; }
-        .sidebar-item.active { background: var(--tg-active); }
-
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #2b5278;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            flex-shrink: 0;
+        .btn-branch:hover {
+            background: #fff;
+            color: #000;
+            font-weight: bold;
         }
-
-        .glitch-text {
-            animation: glitch 1s linear infinite;
-        }
-
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px,0) skew(0deg); }
-            4%, 60% { transform: translate(-2px,0) skew(0deg); }
-            62% { transform: translate(0,0) skew(5deg); }
-        }
-
-        .btn-tg {
-            background: #2b5278;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: 500;
-            transition: brightness 0.2s;
-        }
-
-        .btn-tg:hover { filter: brightness(1.2); }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
     <div id="boot-screen">
-        <div id="boot-log" class="text-xs md:text-sm"></div>
+        <div id="boot-log" class="text-xs md:text-sm leading-loose"></div>
     </div>
 
-    <div class="bg-overlay"></div>
+    <div class="viewport-background"></div>
+    <div class="scan-line"></div>
 
-    <div class="telegram-container">
-        <aside class="sidebar">
-            <div class="p-4 border-b border-black/20 flex items-center gap-4">
-                <div class="w-8 h-1 bg-white/20 rounded"></div>
-                <div class="text-sm font-medium opacity-70">Telegram</div>
+    <div class="max-w-7xl mx-auto h-full flex flex-col border border-white/10 relative overflow-hidden bg-black/40 backdrop-blur-sm">
+        
+        <header class="border-b border-white/10 p-4 flex justify-between items-center bg-black/60">
+            <div class="flex items-center gap-4">
+                <span class="text-[10px] opacity-50 uppercase tracking-widest">Status: <span class="text-green-500">Online</span></span>
+                <span class="text-[10px] opacity-50 uppercase tracking-widest">Access: User_Lapin</span>
             </div>
-            
-            <div id="chat-list" class="overflow-y-auto flex-1">
-                </div>
-        </aside>
+            <div class="glitch font-bold tracking-widest text-sm" data-text="LAPIN SYSTEM v2.0">LAPIN SYSTEM v2.0</div>
+            <div class="text-[10px] opacity-50 font-mono" id="clock">00:00:00</div>
+        </header>
 
-        <main class="chat-area">
-            <header class="chat-header">
-                <div id="active-chat-info" class="flex flex-col">
-                    <span id="header-name" class="font-medium text-sm">lapin</span>
-                    <span id="header-status" class="text-[11px] text-blue-400">1 подписчик</span>
+        <div class="flex flex-1 overflow-hidden">
+            <nav class="w-72 border-r border-white/10 p-6 flex flex-col gap-2 bg-black/40 overflow-y-auto">
+                <div class="text-[9px] uppercase tracking-widest opacity-30 mb-4 font-bold border-b border-white/10 pb-2">Main_Directories</div>
+                <a href="#vzaidkost" class="sidebar-link p-2 text-xs opacity-60">/root/vzaidkost</a>
+                <a href="#murmure-de-vide" class="sidebar-link p-2 text-xs opacity-60">/root/murmure-de-vide</a>
+                <a href="#ili" class="sidebar-link p-2 text-xs opacity-60">/root/ili</a>
+                <a href="#foryouhaaa" class="sidebar-link p-2 text-xs opacity-60">/root/foryouhaaa</a>
+                <a href="#limite" class="sidebar-link p-2 text-xs opacity-60">/root/limite</a>
+                
+                <div class="text-[9px] uppercase tracking-widest opacity-30 mt-6 mb-4 font-bold border-b border-white/10 pb-2">Sub_Layers</div>
+                <a href="#mirror" class="sidebar-link p-2 text-xs text-red-400 opacity-80">/root/mirror_1788</a>
+                
+                <div class="mt-auto space-y-2">
+                    <div class="text-[8px] opacity-20 uppercase">Experimental_Paths</div>
+                    <div class="flex gap-2">
+                        <a href="#dialog-a" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">A</a>
+                        <a href="#dialog-b" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">B</a>
+                        <a href="#dialog-c" class="flex-1 text-center border border-white/10 text-[10px] py-1 hover:bg-white hover:text-black">C</a>
+                    </div>
                 </div>
-            </header>
+            </nav>
 
-            <div id="messages-container" class="flex-1 overflow-y-auto p-4 md:p-10 flex flex-col items-center">
-                </div>
+            <main class="flex-1 overflow-y-auto p-12 relative">
+                <div id="view-container" class="max-w-3xl mx-auto opacity-0 transition-all duration-700 transform translate-y-4">
+                    </div>
+            </main>
+        </div>
 
-            <div class="p-4 bg-var(--tg-sidebar) flex justify-center">
-                <div class="max-w-2xl w-full bg-[#17212b] rounded-lg p-3 text-sm text-[#708499] border border-white/5">
-                    Публикация...
-                </div>
-            </div>
-        </main>
+        <footer class="border-t border-white/10 p-2 text-[8px] flex justify-between px-6 bg-black/90">
+            <div class="opacity-20 uppercase tracking-tighter">Syndicate Engine // Void Protocols Active</div>
+            <div class="opacity-20 uppercase tracking-widest">"ответ — это то, что ты сам унесёшь"</div>
+        </footer>
     </div>
 
     <script>
-        const CHATS = {
+        const DATA = {
             'vzaidkost': {
-                name: 'lapin',
-                id: '@vzaidkost',
-                avatar: 'L',
-                status: '1 подписчик',
-                messages: [
-                    { type: 'info', text: '13 февраля. Канал создан' },
-                    { type: 'bubble', time: '07:26', text: 'You say I took everything? I only took your mask. Beneath it, there was nothing but a broken doll.' },
-                    { type: 'bubble', time: '08:00', text: 'Welcome home, @vzaidkost. The cage is still open.\n\n[TRY GOING TO THE OLD CHANNEL @vzaidkost]' },
-                    { type: 'bubble', time: '09:48', text: 'You like games, don\'t you? Let\'s see if your intellect matches your ambition. Here is your mirror, broken down into signals.\n\nMIRROR #1788\n\nTranslate it. Realize it. Admit it.' }
-                ]
+                title: 'LAPIN // VZAIDKOST',
+                content: `
+                    <div class="space-y-8">
+                        <div class="border-l-2 border-white/20 pl-6 py-4 italic text-lg opacity-90 leading-relaxed">
+                            архив неслучившегося
+                        </div>
+                        <div class="space-y-6 text-sm opacity-70 leading-relaxed">
+                            <p>здесь правда — не в строчках, а в паузе меж них,<br>где эхо без голоса стелется в тишь.<br>не место, а след от несказанных слов,<br>что таял во мгле, не дойдя до основ.</p>
+                            <p class="text-white font-bold py-4 border-y border-white/5">ты ищешь названья? его тут не жди,<br>оно растворилось в безликой груди.<br>ты видишь не буквы — лишь призрак чернил,<br>что ветер циферблатов давно уносил.</p>
+                            <p>здесь нету дверей, есть лишь тонкая грань,<br>где мысль, не рождённая, прячется в гарь.<br>ты входишь с вопросом, но вскоре поймёшь:<br>ответ — это то, что ты сам унесёшь.</p>
+                        </div>
+                    </div>
+                `
             },
             'murmure-de-vide': {
-                name: 'murmure de vide',
-                id: '@Auuddvordu',
-                avatar: 'M',
-                status: '1 подписчик',
-                messages: [
-                    { type: 'info', text: '9 февраля. Канал создан' },
-                    { type: 'bubble', time: '04:31', text: 'архив неслучившегося\n\nздесь правда — не в строчках, а в паузе меж них, где эхо без голоса стелется в тишь. не место, а след от несказанных слов, что таял во мгле, не дойдя до основ.' },
-                    { type: 'link', url: 'https://t.me/Auuddvordu', label: 'Перейти в канал' }
-                ]
+                title: 'DIRECTORY // MURMURE_DE_VIDE',
+                content: `<div class="whitespace-pre-line text-sm opacity-80 leading-loose">Source: https://t.me/Auuddvordu\n\nЭхо пустоты зафиксировано.\nОбъекты не обнаружены.\nТолько тишина.</div>`
             },
             'ili': {
-                name: 'или',
-                id: '@Vozzmezdrr',
-                avatar: 'И',
-                status: '1 подписчик',
-                messages: [
-                    { type: 'bubble', time: '05:08', text: 'здесь числа не знают порядка, а звук - чистоты. здесь падают маски, касаясь немой черты. не ищи отражений - зеркало выпило взгляд.' }
-                ]
+                title: 'DIRECTORY // ILI',
+                content: `<div class="text-sm opacity-80">Source: https://t.me/Vozzmezdrr\n\n[Выбор сделан. Или нет.]</div>`
             },
             'foryouhaaa': {
-                name: 'si vous êtes arrivé...',
-                id: '@foryouhaaa',
-                avatar: 'S',
-                status: '1 подписчик',
-                messages: [
-                    { type: 'bubble', time: '05:49', text: 'Identification par le rythme. je ressens la même chose que cette mélodie.\n\nэто единственный способ сказать правду.' },
-                    { type: 'choice', text: 'choisis. je vais t\'aider. allons discuter.', options: [
-                        { label: 'A', link: '#dialog-a' },
-                        { label: 'B', link: '#dialog-b' },
-                        { label: 'C', link: '#dialog-c' }
-                    ]}
-                ]
+                title: 'SI VOUS ÊTES ARRIVÉ JUSQU\'ICI',
+                content: `
+                    <p class="mb-8 text-sm opacity-70">Data analysis complete... Select your synchronization path:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div onclick="location.hash='dialog-a'" class="btn-branch">PATH_A</div>
+                        <div onclick="location.hash='dialog-b'" class="btn-branch">PATH_B</div>
+                        <div onclick="location.hash='dialog-c'" class="btn-branch">PATH_C</div>
+                    </div>
+                `
             },
             'mirror': {
-                name: 'Mirror #1788',
-                id: 'System',
-                avatar: '!',
-                status: 'Decrypting...',
-                messages: [
-                    { type: 'bubble', time: 'now', text: 'DECODING MODULE INITIALIZED.' },
-                    { type: 'morse', text: '- .... .. ... / .. ... / -. --- - / .- / -.. .-. . .- -- / ... --- -- . / --- -. . / .. ... / .-- .- - -.-. .... .. -. --. / -.-- --- ..- / .-.. .- .--. .. -.', decoded: 'THIS IS NOT A DREAM. SOMEONE IS WATCHING YOU, LAPIN.' }
-                ]
+                title: 'MIRROR_DECRYPTOR_#1788',
+                content: `
+                    <div class="bg-red-900/10 border border-red-900/30 p-4 mb-6 text-[10px] uppercase text-red-500">
+                        Warning: Memory fragmentation detected. Decoding required.
+                    </div>
+                    <div class="bg-black/40 border border-white/5 p-6 font-mono text-xs tracking-[0.3em] mb-8 leading-loose" id="morse-box">
+                        - .... .. ... / .. ... / -. --- - / .- / -.. .-. . .- -- / ... --- -- . / --- -. . / .. ... / .-- .- - -.-. .... .. -. --. / -.-- --- ..- / .-.. .- .--. .. -.
+                    </div>
+                    <button onclick="runDecrypt()" id="dec-btn" class="border border-white/30 px-8 py-3 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+                        Execute Decryption Protocol
+                    </button>
+                    <div id="dec-res" class="mt-10 text-xl font-bold tracking-[0.2em] text-white hidden glitch" data-text=""></div>
+                `
             },
-            'dialog-a': { name: 'A', id: 'Private', avatar: 'A', status: 'final path', messages: [{ type: 'bubble', text: 'Path A: The truth you hide.' }] },
-            'dialog-b': { name: 'B', id: 'Private', avatar: 'B', status: 'final path', messages: [{ type: 'bubble', text: 'Path B: The truth you fear.' }] },
-            'dialog-c': { name: 'C', id: 'Private', avatar: 'C', status: 'final path', messages: [{ type: 'bubble', text: 'Path C: The experiment continues.' }] }
+            'dialog-a': { title: 'PATH // A', content: '<div class="text-sm opacity-50">Connecting to terminal 2Z5pdpC... [ACCESS DENIED]</div>' },
+            'dialog-b': { title: 'PATH // B', content: '<div class="text-sm opacity-50">Connecting to terminal wtqtwY0... [CONNECTION LOST]</div>' },
+            'dialog-c': { title: 'PATH // C', content: '<div class="text-sm opacity-50">Connecting to terminal nif1_K6... [ENCRYPTED]</div>' }
         };
-
-        let currentChat = 'vzaidkost';
 
         function initBoot() {
             const log = document.getElementById('boot-log');
             const lines = [
-                "> INITIALIZING LAPIN_OS v.1.0...",
-                "> LOADING CORE MODULES...",
-                "> ACCESSING ENCRYPTED_FILES/VZAIDKOST...",
-                "> CONNECTION ESTABLISHED: 127.0.0.1",
-                "> WARNING: MIRROR_LEAK DETECTED",
-                "> DECODING ARCHIVE..."
+                "> INITIALIZING SYNDICATE_CORE...",
+                "> MOUNTING /ROOT/LAPIN...",
+                "> LOADING NEURAL_INTERFACE...",
+                "> ACCESSING VZAIDKOST_ARCHIVE...",
+                "> DECRYPTING VISUAL_LAYER...",
+                "> SYSTEM_READY."
             ];
             
             let i = 0;
             const interval = setInterval(() => {
-                if(i < lines.length) {
+                if (i < lines.length) {
                     log.innerHTML += `<div>${lines[i]}</div>`;
                     i++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
+                    setTimeout(() => {
+                        document.getElementById('boot-screen').style.opacity = '0';
+                        setTimeout(() => document.getElementById('boot-screen').remove(), 1000);
+                        renderView();
+                    }, 800);
                 }
-            }, 400);
+            }, 300);
         }
 
-        function renderSidebar() {
-            const list = document.getElementById('chat-list');
-            list.innerHTML = '';
-            Object.keys(CHATS).forEach(key => {
-                if (['dialog-a', 'dialog-b', 'dialog-c'].includes(key)) return;
-                const chat = CHATS[key];
-                const item = document.createElement('div');
-                item.className = `sidebar-item ${currentChat === key ? 'active' : ''}`;
-                item.onclick = () => switchChat(key);
-                item.innerHTML = `
-                    <div class="avatar">${chat.avatar}</div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-medium">${chat.name}</span>
-                        <span class="text-[11px] opacity-50">${chat.id}</span>
-                    </div>
-                `;
-                list.appendChild(item);
+        function renderView() {
+            const hash = window.location.hash.replace('#', '') || 'vzaidkost';
+            const container = document.getElementById('view-container');
+            const data = DATA[hash] || DATA['vzaidkost'];
+
+            // Update active state in sidebar
+            document.querySelectorAll('.sidebar-link').forEach(l => {
+                l.classList.toggle('active', l.getAttribute('href') === `#${hash}`);
             });
-        }
 
-        function switchChat(key) {
-            currentChat = key;
-            const chat = CHATS[key];
-            document.getElementById('header-name').innerText = chat.name;
-            document.getElementById('header-status').innerText = chat.status;
-            
-            const container = document.getElementById('messages-container');
-            container.innerHTML = '';
-            
-            chat.messages.forEach(msg => {
-                if(msg.type === 'info') {
-                    container.innerHTML += `<div class="text-[11px] bg-black/30 px-3 py-1 rounded-full mb-4 opacity-60">${msg.text}</div>`;
-                } else if(msg.type === 'bubble') {
-                    container.innerHTML += `
-                        <div class="w-full flex justify-start mb-2">
-                            <div class="message-bubble">
-                                <div class="text-[13px] whitespace-pre-wrap">${msg.text}</div>
-                                <div class="text-[9px] text-right opacity-40 mt-1">${msg.time || ''}</div>
-                            </div>
-                        </div>
-                    `;
-                } else if(msg.type === 'choice') {
-                    let btns = msg.options.map(o => `<button onclick="switchChat('${o.link.replace('#','')}')" class="bg-blue-900/40 border border-white/10 p-2 hover:bg-blue-800 transition">${o.label}</button>`).join('');
-                    container.innerHTML += `<div class="message-bubble w-full max-w-sm"><div class="text-sm mb-4">${msg.text}</div><div class="grid grid-cols-3 gap-2">${btns}</div></div>`;
-                } else if(msg.type === 'morse') {
-                    container.innerHTML += `
-                        <div class="message-bubble w-full max-w-md text-center">
-                            <div id="morse-text" class="font-mono text-xs mb-4 tracking-widest">${msg.text}</div>
-                            <button id="dec-btn" onclick="decodeMorse('${msg.decoded}')" class="btn-tg">Расшифровать</button>
-                            <div id="dec-output" class="mt-4 text-sm font-bold text-blue-400 hidden"></div>
-                        </div>
-                    `;
-                }
-            });
-            renderSidebar();
-        }
+            container.classList.remove('opacity-100', 'translate-y-0');
+            container.classList.add('opacity-0', 'translate-y-4');
 
-        function decodeMorse(result) {
-            const out = document.getElementById('dec-output');
-            const btn = document.getElementById('dec-btn');
-            btn.innerText = "Processing...";
             setTimeout(() => {
-                out.innerText = result;
-                out.classList.remove('hidden');
-                btn.innerText = "Experiment Complete";
-            }, 1500);
+                container.innerHTML = `
+                    <h2 class="text-3xl font-bold mb-12 tracking-tighter uppercase glitch" data-text="${data.title}">${data.title}</h2>
+                    ${data.content}
+                `;
+                container.classList.remove('opacity-0', 'translate-y-4');
+                container.classList.add('opacity-100', 'translate-y-0');
+            }, 300);
         }
 
+        function runDecrypt() {
+            const res = document.getElementById('dec-res');
+            const btn = document.getElementById('dec-btn');
+            btn.innerHTML = "DECODING...";
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                const text = "THIS IS NOT A DREAM. SOMEONE IS WATCHING YOU, LAPIN.";
+                res.innerHTML = text;
+                res.setAttribute('data-text', text);
+                res.classList.remove('hidden');
+                btn.style.display = 'none';
+            }, 2000);
+        }
+
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0];
+        }
+
+        window.addEventListener('hashchange', renderView);
         window.onload = () => {
             initBoot();
-            switchChat('vzaidkost');
+            setInterval(updateClock, 1000);
         };
     </script>
 </body>
